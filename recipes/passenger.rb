@@ -43,8 +43,11 @@ elsif node['nginx']['passenger']['install_method'] == 'source'
   end
 
   node.run_state['nginx_configure_flags'] =
-    node.run_state['nginx_configure_flags'] | ["--add-module=#{node['nginx']['passenger']['root']}/ext/nginx"]
+    node.run_state['nginx_configure_flags'] | ["--add-module=#{node['nginx']['passenger']['root']}/src/nginx_module"]
 
+  if !Dir.exists? "#{node['nginx']['passenger']['root']}/buildout"
+    node.run_state['nginx_force_recompile'] = true
+  end
 end
 
 template "#{node['nginx']['dir']}/conf.d/passenger.conf" do
